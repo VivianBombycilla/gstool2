@@ -1,7 +1,6 @@
 from gstool import *
-import subprocess # for inkscape command line tool
 
-games_xl,teams_xl = read_excel("GSTool3_WNBA2025.xlsx","Input_Games","Input_Teams")
+games_xl,teams_xl = read_excel("python/data_WNBA2025.xlsx","Input_Games","Input_Teams")
 
 all_teams = teams_xl.index
 east_teams = teams_xl[teams_xl.Conference == "Eastern"].index
@@ -65,8 +64,6 @@ def make_WNBA_plot(
         label_y_offset = 1,
         
         # AESTHETICS
-        # style = """@font-face{font-family: "Saira Semi-Expanded";font-style: normal;src: url("Saira_wdth112-5_wght400.ttf")}""",
-        # style = 
         font_family = "Saira",
 
         # AUXILIARY FILE PATHS
@@ -83,8 +80,6 @@ make_WNBA_plot(
     path_output = "outputs/WNBA2025_W"+str(week)+".svg"
 )
 
-subprocess.run(["inkscape","./outputs/WNBA2025_W"+str(week)+".svg","-o","./outputs/WNBA2025_W"+str(week)+".png","-d",str(960*2)],shell=True)
-
 for team_list,conf in zip(teams_lists,confs):
     dots_data,segments_data,labels_data,teams_data = produce_data_frames(team_list,games_xl,teams_xl)
     make_WNBA_plot(
@@ -95,6 +90,3 @@ for team_list,conf in zip(teams_lists,confs):
         plot_title = "WNBA Graphical Standings – "+date+" – " + conf,
         path_output = "outputs/WNBA2025_W"+str(week)+"_"+conf+".svg"
     )
-    subprocess.run(["inkscape","outputs/WNBA2025_W"+str(week)+"_"+conf+".svg","-o","outputs/WNBA2025_W"+str(week)+"_"+conf+".png","-d",str(960*2)],shell=True)
-    
-
