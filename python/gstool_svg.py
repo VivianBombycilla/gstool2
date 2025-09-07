@@ -252,5 +252,3 @@ class SVG_Plot:
         )
         pill = ET.Element("path",d = path,fill=fill)        
         self.element.append(pill)
-
-    

@@ -6,18 +6,14 @@ def read_excel(spreadsheet_path,games_sheet,teams_sheet):
     teams_xl = pd.read_excel(spreadsheet_path,sheet_name=teams_sheet,index_col=0)
     return games_xl,teams_xl
 
-# Find the points earned from a result. This must be adjusted for each sport.
-def points_from_result_WNBA(team_won):
-    return int(team_won)
-
-# From the number of games and points give the X and Y coordinates from a given state.
-def coords_from_state_WNBA(games,points):
-    return games,2*points-games
-
 # Produce the dots, labels, segments intermediate tables for a team.
-def process_team(team,games_xl):
+# Inputs: team - string containing the team name
+#         games_xl - DataFrame containing game data
+#         points_from_result - Points gained or lost from a given result
+def process_team(team,games_xl,points_from_result):
+    """Produces intermediate DataFrames for one team."""
     games_filtered = games_xl[(games_xl.Team1 == team) | (games_xl.Team2 == team)]
-    games_filtered
+    # games_filtered
     games_filtered_list = list(games_filtered.itertuples(index=False))
 
     team_dots_dict = {"games":[0],"points":[0],"team":[team]}
@@ -25,7 +21,7 @@ def process_team(team,games_xl):
 
     games_count = 0
     for game in games_filtered_list:
-        result = points_from_result_WNBA(game.Winner == team)
+        result = points_from_result(team,game.Winner)
         team_dots_dict["games"].append(team_dots_dict["games"][-1] + 1)
         team_dots_dict["points"].append(team_dots_dict["points"][-1] + result)
         team_dots_dict["team"].append(team)
@@ -58,7 +54,7 @@ def num_in_group(data,row,cols):
     return data.shape[0]
 
 # From a list of teams, produce DataFrames for plotting dots, segments, labels, as well as a DataFrame for the teams data.
-def produce_data_frames(teams,games_xl,teams_xl):
+def produce_data_frames(teams,games_xl,teams_xl,points_from_result,coords_from_state):
     dots_data = pd.DataFrame()
     segments_data = pd.DataFrame()
     labels_data = pd.DataFrame()
@@ -66,7 +62,7 @@ def produce_data_frames(teams,games_xl,teams_xl):
 
     # Process data into DataFrames
     for team in teams:
-        team_dots_data,team_segments_data,team_labels_data = process_team(team,games_xl)
+        team_dots_data,team_segments_data,team_labels_data = process_team(team,games_xl,points_from_result)
         dots_data = pd.concat([dots_data,team_dots_data],axis=0,ignore_index=True)
         segments_data = pd.concat([segments_data,team_segments_data],axis=0,ignore_index=True)
         labels_data = pd.concat([labels_data,team_labels_data],axis=0,ignore_index=True)
@@ -78,10 +74,10 @@ def produce_data_frames(teams,games_xl,teams_xl):
     labels_data["numInGroup"] = labels_data.apply(lambda row : num_in_group(labels_data,row,["games","points"]),axis=1)
     
     # Add X and Y columns
-    dots_data["pos"] = dots_data.apply(lambda row : coords_from_state_WNBA(row.games,row.points),axis=1)
-    segments_data["pos1"] = segments_data.apply(lambda row : coords_from_state_WNBA(row.games,row.points),axis=1)
-    segments_data["pos2"] = segments_data.apply(lambda row : coords_from_state_WNBA(row.games + 1,row.points + row.result),axis=1)
-    labels_data["pos"] = labels_data.apply(lambda row : coords_from_state_WNBA(row.games,row.points),axis=1)
+    dots_data["pos"] = dots_data.apply(lambda row : coords_from_state(row.games,row.points),axis=1)
+    segments_data["pos1"] = segments_data.apply(lambda row : coords_from_state(row.games,row.points),axis=1)
+    segments_data["pos2"] = segments_data.apply(lambda row : coords_from_state(row.games + 1,row.points + row.result),axis=1)
+    labels_data["pos"] = labels_data.apply(lambda row : coords_from_state(row.games,row.points),axis=1)
     dots_data[["x","y"]] = dots_data["pos"].apply(pd.Series)
     segments_data[["x1","y1"]] = segments_data["pos1"].apply(pd.Series)
     segments_data[["x2","y2"]] = segments_data["pos2"].apply(pd.Series)

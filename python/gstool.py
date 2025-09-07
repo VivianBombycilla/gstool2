@@ -10,6 +10,15 @@ def compute_segment_coords(shared_with,num_in_group,segment_size,segment_rel_wid
     high_y_adj = -segment_size + high_part * y_per_part
     return low_y_adj,high_y_adj
 
+def find_label_offsets(label_loop_threshold,num_in_group,shared_with):
+    col = (num_in_group-1) % label_loop_threshold
+    row = (num_in_group-1) // label_loop_threshold
+    rows = (shared_with-1) // label_loop_threshold + 1
+    x_offset = col
+    y_offset = row - 0.5*(rows-1)
+    return x_offset,y_offset
+
+
 def make_GS_Plot(
     # DATA
     dots_data,
@@ -34,16 +43,17 @@ def make_GS_Plot(
     segment_rel_width = 4, # how many times thicker the segments should be than the spaces between the segments
     
     # TEXT
-    plot_title = "WNBA Graphical Standings – Jul 29, 2025",
+    plot_title = "PLOT TITLE",
     plot_title_size = 10,
-    vertical_axis_title = "Wins above .500",
-    horizontal_axis_title = "Game",
+    vertical_axis_title = "Vertical axis title",
+    horizontal_axis_title = "Horizontal axis title",
 
     # LABELS
-    label_size = 2.5,
+    label_size = 2.5, # label size (y)
     label_shared_x_offset = 0.45,
     label_x_offset = 0.7,
     label_y_offset = 1,
+    label_loop_threshold = 5, # max number of logos in a row
     
     # AESTHETICS
     style = "", # provide the contents of the <style> object at the start of the file
@@ -51,7 +61,7 @@ def make_GS_Plot(
 
     # AUXILIARY FILE PATHS
     path_logos = "Logos/",
-    path_output = "test3.svg"
+    path_output = "test.svg"
     ):
 
     # Find plot limits
@@ -171,9 +181,10 @@ def make_GS_Plot(
     # Teams
     labels_rows = list(labels_data.itertuples(index=False))
     for label_row in labels_rows:
+        x_offset,y_offset = find_label_offsets(label_loop_threshold,label_row.numInGroup,label_row.sharedWith)
         plot.annotate_image(
-            x=label_row.x+label_shared_x_offset+label_x_offset*(label_row.numInGroup-1),
-            y=label_row.y,#+logo_y_offset*team_row.YOffset,
+            x=label_row.x+label_shared_x_offset+label_x_offset*x_offset,
+            y=label_row.y+label_y_offset*y_offset,
             href=path_logos+teams_data.loc[label_row.team].ImagePath,
             width=label_size,
             height=label_size
