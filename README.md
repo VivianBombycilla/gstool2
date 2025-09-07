@@ -11,5 +11,4 @@ The following Python libraries are required:
 The next new things I want to do with this project:
 - Add an option to have dashed lines (e.g., for bye weeks)
 - Docstrings
-- Put logos on two separate lines if there are enough
 - Add an option to embed image files and fonts in the SVG (for more portability)
