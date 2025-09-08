@@ -110,7 +110,7 @@ def make_GS_Plot(
     ))
     # Horizontal axis title
     svg.root.append(svg_text(
-        x = 128,
+        x = 20+plot_width/2,
         y = 140,
         text = horizontal_axis_title,
         font_family = font_family,

@@ -236,13 +236,16 @@ class SVG_Plot:
         abs_height = self.coords_length2abs_y(height)
         self.element.append(svg_image(abs_x,abs_y,href,width=abs_width,height=abs_height))
     # PILL_V: Pill, vertical. Centrally aligned. "Size" is half the length of the flat side.
-    def annotate_pill_v(self,x,y,size,r,fill="black"):
+    def annotate_pill_v(self,x,y,size,r,fill="black",dash_size = 0.2):
+        group = ET.Element("g")
         abs_height = self.coords_length2abs_y(size)
         abs_width = self.coords_length2abs_y(r)
         abs_x1 = self.coords_plot2abs_x(x) - abs_width
         abs_y1 = self.coords_plot2abs_y(y) - abs_height
         abs_x2 = abs_x1+2*abs_width
         abs_y2 = abs_y1+2*abs_height
+        # abs_midy1 = abs_y1+0.9*abs_height
+        abs_midy = abs_y1+(1-(dash_size/2))*abs_height
         path = (
             "M %f,%f" % (abs_x1,abs_y1)
             + "A%f,%f 0 0 1 %f,%f" % (abs_width,abs_width,abs_x2,abs_y1)
@@ -250,5 +253,8 @@ class SVG_Plot:
             + "A%f,%f 0 0 1 %f,%f" % (abs_width,abs_width,abs_x1,abs_y2)
             + "Z"
         )
-        pill = ET.Element("path",d = path,fill=fill)        
-        self.element.append(pill)
+        pill = ET.Element("path",d = path,fill=fill)
+        rect = svg_rect(x = abs_x1,y = abs_midy,width = abs_width*2,height = abs_height*dash_size,fill = "white")
+        group.append(pill)
+        group.append(rect)    
+        self.element.append(group)
