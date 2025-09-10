@@ -12,3 +12,5 @@ The next new things I want to do with this project:
 - Add an option to have dashed lines (e.g., for bye weeks)
 - Docstrings
 - Add an option to embed image files and fonts in the SVG (for more portability)
+- Use CSS to make the SVGs better and easier to handle
+- Use kwargs to make the custom SVG API better and easier to handle

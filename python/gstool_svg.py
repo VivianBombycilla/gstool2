@@ -43,7 +43,7 @@ def svg_polygon(x,y,stroke="none",stroke_width=1,fill="black"):
                           "stroke-width":str(stroke_width),
                           "fill":str(fill)
                       })
-def svg_text(x,y,text,stroke="none",fill="black",font_size="12pt",font_family="auto",text_anchor="start",dx=0,dy=0,transform="none"):
+def svg_text(x,y,text,stroke="none",fill="black",font_size="12pt",font_family="auto",text_anchor="start",dx=0,dy=0,transform="none",identity=""):
     text_el = ET.Element("text",
                       attrib={
                           "x":str(x),
@@ -56,6 +56,7 @@ def svg_text(x,y,text,stroke="none",fill="black",font_size="12pt",font_family="a
                           "dx":str(dx),
                           "dy":str(dy),
                           "transform":str(transform),
+                          "id":str(identity)
                       })
     text_el.text = text
     return text_el
@@ -236,7 +237,7 @@ class SVG_Plot:
         abs_height = self.coords_length2abs_y(height)
         self.element.append(svg_image(abs_x,abs_y,href,width=abs_width,height=abs_height))
     # PILL_V: Pill, vertical. Centrally aligned. "Size" is half the length of the flat side.
-    def annotate_pill_v(self,x,y,size,r,fill="black",dash_size = 0.2):
+    def annotate_pill_v(self,x,y,size,r,fill="black",dash_size = 0.1):
         group = ET.Element("g")
         abs_height = self.coords_length2abs_y(size)
         abs_width = self.coords_length2abs_y(r)
@@ -258,3 +259,5 @@ class SVG_Plot:
         group.append(pill)
         group.append(rect)    
         self.element.append(group)
+
+    

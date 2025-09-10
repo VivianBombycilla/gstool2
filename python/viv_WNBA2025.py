@@ -1,6 +1,7 @@
 from gstool import *
+import subprocess # for inkscape command line tool
 
-games_xl,teams_xl = read_excel("python/data_WNBA2025.xlsx","Input_Games","Input_Teams")
+games_xl,teams_xl = read_excel("data_WNBA2025.xlsx","Input_Games","Input_Teams")
 
 all_teams = teams_xl.index
 east_teams = teams_xl[teams_xl.Conference == "Eastern"].index
@@ -9,16 +10,35 @@ west_teams = teams_xl[teams_xl.Conference == "Western"].index
 teams_lists = (east_teams,west_teams)
 confs = ("Eastern","Western")
 
+# Find the points earned from a result. This must be adjusted for each sport.
+def points_from_result_WNBA(team,winner):
+    return int(team == winner)
+
+# From the number of games and points give the X and Y coordinates from a given state.
+def coords_from_state_WNBA(games,points):
+    return games,2*points-games
+
 # Obtain DataFrames for all_teams
-dots_data,segments_data,labels_data,teams_data = produce_data_frames(all_teams,games_xl,teams_xl)
+dots_data,segments_data,labels_data,teams_data = produce_data_frames(all_teams,games_xl,teams_xl,points_from_result_WNBA,coords_from_state_WNBA)
 
 # Obtain maximum absolute y value.
 x_max = max(dots_data.x)
 y_max = max(abs(dots_data.y))
 
 # WEEK TO WEEK
-date = "Sep 02, 2025"
-week = 16
+date = "Sep 09, 2025"
+week = 17
+
+wnba_annotations = [
+    svg_text(
+        x = 254.5,
+        y = 142,
+        text = "Graphic by Vivian (vbbcla)",
+        font_size = 4,
+        font_family = "auto",
+        text_anchor = "end"
+    )
+]
 
 def make_WNBA_plot(
     dots_data,
@@ -59,15 +79,28 @@ def make_WNBA_plot(
         
         # LABELS
         label_size = 3.5,
-        label_shared_x_offset = 0.6,
+        label_shared_x_offset = 0.7,
         label_x_offset = 0.7,
         label_y_offset = 1,
         
         # AESTHETICS
-        font_family = "Saira",
+        style = """
+* {
+font-family: "Merriweather Sans";
+font-weight: 300;
+}
+#title {
+font-weight: normal
+}
+""",
+        # font_family = "Merriweather Sans",
+        annotations = wnba_annotations,
+
+        # COLOURS
+        background_colour = "#f8ece1",
 
         # AUXILIARY FILE PATHS
-        path_logos = "./../Logos/",
+        path_logos = "./../outputs/logos/wnba/",
         path_output = path_output
     )
 
@@ -80,8 +113,10 @@ make_WNBA_plot(
     path_output = "outputs/WNBA2025_W"+str(week)+".svg"
 )
 
+subprocess.run(["inkscape","./outputs/WNBA2025_W"+str(week)+".svg","-o","./outputs/WNBA2025_W"+str(week)+".png","-d",str(960*2)],shell=True)
+
 for team_list,conf in zip(teams_lists,confs):
-    dots_data,segments_data,labels_data,teams_data = produce_data_frames(team_list,games_xl,teams_xl)
+    dots_data,segments_data,labels_data,teams_data = produce_data_frames(team_list,games_xl,teams_xl,points_from_result_WNBA,coords_from_state_WNBA)
     make_WNBA_plot(
         dots_data,
         segments_data,
@@ -90,3 +125,6 @@ for team_list,conf in zip(teams_lists,confs):
         plot_title = "WNBA Graphical Standings – "+date+" – " + conf,
         path_output = "outputs/WNBA2025_W"+str(week)+"_"+conf+".svg"
     )
+    subprocess.run(["inkscape","outputs/WNBA2025_W"+str(week)+"_"+conf+".svg","-o","outputs/WNBA2025_W"+str(week)+"_"+conf+".png","-d",str(960*2)],shell=True)
+    
+

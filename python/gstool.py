@@ -2,6 +2,7 @@ from gstool_svg import *
 from gstool_data_manip import *
 
 def compute_segment_coords(shared_with,num_in_group,segment_size,segment_rel_width):
+    """Computes the relative y position of the segment, given aesthetic settings."""
     parts = shared_with * (segment_rel_width + 1) - 1
     y_per_part = 2*segment_size/parts 
     low_part = (shared_with-num_in_group)*(segment_rel_width+1)
@@ -11,11 +12,12 @@ def compute_segment_coords(shared_with,num_in_group,segment_size,segment_rel_wid
     return low_y_adj,high_y_adj
 
 def find_label_offsets(label_loop_threshold,num_in_group,shared_with):
+    """Computes the appropriate adjustments to be made to a label, taking into consideration wrapping settings."""
     col = (num_in_group-1) % label_loop_threshold
     row = (num_in_group-1) // label_loop_threshold
     rows = (shared_with-1) // label_loop_threshold + 1
     x_offset = col
-    y_offset = row - 0.5*(rows-1)
+    y_offset = - row + 0.5*(rows-1)
     return x_offset,y_offset
 
 
@@ -57,12 +59,16 @@ def make_GS_Plot(
     
     # AESTHETICS
     style = "", # provide the contents of the <style> object at the start of the file
-    font_family="Saira",
+    font_family = "auto",
+    annotations = [], # additional elements which will be added at the end.
+    # COLOURS
+    background_colour = "#ffffff",
 
     # AUXILIARY FILE PATHS
     path_logos = "Logos/",
     path_output = "test.svg"
     ):
+    """Creates a Graphical Standings svg file at the path indicated, using the data and aesthetic settings provided."""
 
     # Find plot limits
     if x_lims == "auto":
@@ -72,20 +78,25 @@ def make_GS_Plot(
     else:
         x_min,x_max = x_lims
         y_min,y_max = y_lims
+
+    # Compute the appropriate amount to expand the x axis.
+    # Currently, this expands the x axis proportionally to the y-axis, so that the resulting "ticks" are the same size. In the future, this will probably be called the "square" option.
     expand_x = expand_y*112/plot_width*(x_max-x_min)/(y_max-y_min)
+    
+    # Expand axes
     x_lims = [x_min-expand_x,x_max+expand_x]
     y_lims = [y_min-expand_y,y_max+expand_y]
 
     # Initialize SVG Object
     svg = SVG(256,144)
 
-    # STYLE
+    # Add style
     style_element = ET.Element("style")
     style_element.text = style
     svg.root.append(style_element)
 
     # Background
-    svg.root.append(svg_rect(0,0,256,144,stroke="none",fill="white"))
+    svg.root.append(svg_rect(0,0,256,144,stroke="none",fill=background_colour))
 
     ### PLOT LABELS
     # Plot Title
@@ -95,7 +106,8 @@ def make_GS_Plot(
         text = plot_title,
         font_size = plot_title_size,
         font_family = font_family,
-        text_anchor = "middle"
+        text_anchor = "middle",
+        identity = "title"
     ))
     ## Axis Titles
     # Vertical axis title
@@ -116,15 +128,6 @@ def make_GS_Plot(
         font_family = font_family,
         font_size = 6,
         text_anchor = "middle"
-    ))
-    # Tag
-    svg.root.append(svg_text(
-        x = 254.5,
-        y = 142,
-        text = "Graphic by Vivian (vbbcla)",
-        font_size = 4,
-        font_family = font_family,
-        text_anchor = "end"
     ))
 
     ### PLOT
@@ -191,5 +194,7 @@ def make_GS_Plot(
         )
 
     svg.root.append(plot.element)
+    for annotation in annotations:
+        svg.root.append(annotation)
     svg.tree.write(path_output)
 
