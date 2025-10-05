@@ -201,9 +201,9 @@ class SVG_Plot:
             if not self.inbounds_y(y_break): continue
             x,y = self.coords_plot2abs((self.x_min,y_break))
             group.append(svg_text(
-                x = x,
+                x = x-0.5,
                 y = y,
-                dx = "-0.5ex",
+                # dx = "-0.5ex",
                 dy = "0.5ex",
                 text = str(y_label),
                 stroke = stroke,
@@ -230,12 +230,12 @@ class SVG_Plot:
         abs_x = map(self.coords_plot2abs_x,x)
         abs_y = map(self.coords_plot2abs_y,y)
         self.element.append(svg_polygon(abs_x,abs_y,stroke=stroke,stroke_width=stroke_width,fill=fill))
-    # IMAGE: Centrally aligned. preserveAspectRatio is set to xMidYMid meet by default, may add customization later.
-    def annotate_image(self,x,y,href,width,height):
-        abs_x,abs_y = self.coords_plot2abs((x-width/2,y+height/2))
-        abs_width = self.coords_length2abs_x(width)
+    # IMAGE: Centrally aligned. preserveAspectRatio is set to xMidYMid meet by default, maybe I'll add customization later.
+    def annotate_image(self,x,y,href,height):
+        abs_x,abs_y = self.coords_plot2abs((x,y+height/2))
+        # abs_width = self.coords_length2abs_x(width)
         abs_height = self.coords_length2abs_y(height)
-        self.element.append(svg_image(abs_x,abs_y,href,width=abs_width,height=abs_height))
+        self.element.append(svg_image(abs_x-self.width/2,abs_y,href,width=self.width,height=abs_height))
     # PILL_V: Pill, vertical. Centrally aligned. "Size" is half the length of the flat side.
     def annotate_pill_v(self,x,y,size,r,fill="black",dash_size = 0.1):
         group = ET.Element("g")

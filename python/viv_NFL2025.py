@@ -47,15 +47,23 @@ x_max = max(dots_data.x)
 y_max = max(abs(dots_data.y))
 
 # WEEK TO WEEK
-date = "Sep 09, 2025"
-week = 1
+date = "Sep 30, 2025"
+week = 4
 
 nfl_annotations = [
     svg_text(
         x = 254.5,
         y = 142,
         text = "Graphic by Vivian (vbbcla)",
-        font_size = 4,
+        font_size = 3,
+        font_family = "auto",
+        text_anchor = "end"
+    ),
+    svg_text(
+        x = 254.5,
+        y = 138,
+        text = "Note: Tiebreakers not visualized",
+        font_size = 3,
         font_family = "auto",
         text_anchor = "end"
     )
@@ -77,7 +85,7 @@ def make_NFL_plot(
         teams_data,
 
         # PLOT SETTINGS
-        plot_width = 176,
+        plot_width = 212,
         x_lims = (0,x_max), # either tuple (x_min,x_max) or "auto"
         y_lims = (-y_max,y_max), # either tuple (x_min,x_max) or "auto"
         expand_y = 0.4,#0.5, # amount of padding to add
@@ -99,11 +107,11 @@ def make_NFL_plot(
         horizontal_axis_title = "Week",
         
         # LABELS
-        label_size = 0.4, # label size in y
+        label_size = 0.7, # label size in y
         label_shared_x_offset = 0.1,
-        label_x_offset = 0.12,
-        label_y_offset = 0.23,
-        label_loop_threshold = 4,
+        label_x_offset = 0.15,
+        label_y_offset = 0.4,
+        label_loop_threshold = 3,
         
         # AESTHETICS
         style = """

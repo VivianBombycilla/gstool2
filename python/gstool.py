@@ -37,6 +37,8 @@ def make_GS_Plot(
     # BREAKS
     x_break_size = 3,
     y_break_size = 3,
+    x_minor_break_size = 1,
+    y_minor_break_size = 1,
     axis_labels_size = 6,
 
     # DOTS AND SEGMENTS
@@ -136,8 +138,8 @@ def make_GS_Plot(
     ## Draw axes and grid lines
     # Minors
     plot.add_grid(
-        x_breaks = range(0,x_max+1,1),
-        y_breaks = range(y_min,y_max+1,1),
+        x_breaks = range(0,x_max+1,x_minor_break_size),
+        y_breaks = range(y_min-y_min%y_minor_break_size,y_max+1,y_minor_break_size),
         stroke_width = 0.5,
         stroke = "rgb(90%,90%,90%)"
     )
@@ -189,7 +191,6 @@ def make_GS_Plot(
             x=label_row.x+label_shared_x_offset+label_x_offset*x_offset,
             y=label_row.y+label_y_offset*y_offset,
             href=path_logos+teams_data.loc[label_row.team].ImagePath,
-            width=label_size,
             height=label_size
         )
 

@@ -37,8 +37,8 @@ y_max = math.ceil(max(dots_data.y))
 y_min = math.floor(min(dots_data.y))
 
 # WEEK TO WEEK
-date = "Sep 09, 2025"
-week = 1
+date = "Sep 30, 2025"
+week = 4
 
 wsl_annotations = [
     svg_text(
@@ -50,12 +50,20 @@ wsl_annotations = [
         text_anchor = "end"
     ),
     svg_text(
-        x = 254.5,
-        y = 137,
+        x = 1.5,
+        y = 142,
         text = "Average points per match: "+str(round(avg_points,2)),
-        font_size = 4,
+        font_size = 3,
         font_family = "auto",
-        text_anchor = "end"
+        text_anchor = "start"
+    ),
+    svg_text(
+        x = 1.5,
+        y = 138,
+        text = "Tiebreakers not visualized",
+        font_size = 3,
+        font_family = "auto",
+        text_anchor = "start"
     )
 ]
 
@@ -75,7 +83,7 @@ def make_WSL_plot(
         teams_data,
 
         # PLOT SETTINGS
-        plot_width = 160,#224,
+        plot_width = 212,#224,
         x_lims = (0,x_max), # either tuple (x_min,x_max) or "auto"
         y_lims = (y_min,y_max), # either tuple (x_min,x_max) or "auto"
         expand_y = 0.2,#0.5, # amount of padding to add
@@ -97,9 +105,9 @@ def make_WSL_plot(
         horizontal_axis_title = "Match",
         
         # LABELS
-        label_size = 0.5, # label size in y
-        label_shared_x_offset = 0.05,
-        label_x_offset = 0.07,
+        label_size = 1, # label size in y
+        label_shared_x_offset = 0.1,
+        label_x_offset = 0.125,
         label_y_offset = 1,
         
         # AESTHETICS
@@ -128,7 +136,7 @@ make_WSL_plot(
     segments_data,
     labels_data,
     teams_data,
-    plot_title = "WSL Graphical Standings – "+date,
+    plot_title = "WSL Points Above Average – Matchweek "+str(week),
     path_output = "outputs/WSL202526_W"+str(week)+".svg"
 )
 

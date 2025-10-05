@@ -26,8 +26,8 @@ x_max = max(dots_data.x)
 y_max = max(abs(dots_data.y))
 
 # WEEK TO WEEK
-date = "Sep 09, 2025"
-week = 17
+date = "Final"
+week = 18
 
 wnba_annotations = [
     svg_text(
