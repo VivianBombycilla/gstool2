@@ -2,6 +2,9 @@
 
 `gstool.py` provides a way to turn data from a sports league (as a pandas DataFrame) into a nice SVG graphic.
 
+## How to use
+
+
 ## Dependencies
 The following Python libraries are required:
 - **pandas**

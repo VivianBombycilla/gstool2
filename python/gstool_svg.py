@@ -1,5 +1,4 @@
 import xml.etree.ElementTree as ET
-# import pandas as pd
 
 def svg_line(x1,x2,y1,y2,stroke="black",stroke_width=1,stroke_linecap="butt"):
     return ET.Element("line",
@@ -60,6 +59,7 @@ def svg_text(x,y,text,stroke="none",fill="black",font_size="12pt",font_family="a
                       })
     text_el.text = text
     return text_el
+
 def svg_image(x,y,href,width=None,height=None):
     match (width,height):
         case (None,None):

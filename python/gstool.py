@@ -1,7 +1,12 @@
 from gstool_svg import *
 from gstool_data_manip import *
 
-def compute_segment_coords(shared_with,num_in_group,segment_size,segment_rel_width):
+def compute_segment_coords(
+    shared_with: int,
+    num_in_group: int,
+    segment_size: float,
+    segment_rel_width: float
+):
     """Computes the relative y position of the segment, given aesthetic settings."""
     parts = shared_with * (segment_rel_width + 1) - 1
     y_per_part = 2*segment_size/parts 
@@ -11,7 +16,11 @@ def compute_segment_coords(shared_with,num_in_group,segment_size,segment_rel_wid
     high_y_adj = -segment_size + high_part * y_per_part
     return low_y_adj,high_y_adj
 
-def find_label_offsets(label_loop_threshold,num_in_group,shared_with):
+def find_label_offsets(
+    label_loop_threshold: int,
+    num_in_group: int,
+    shared_with: int
+):
     """Computes the appropriate adjustments to be made to a label, taking into consideration wrapping settings."""
     col = (num_in_group-1) % label_loop_threshold
     row = (num_in_group-1) // label_loop_threshold
@@ -170,6 +179,7 @@ def make_GS_Plot(
     segments_data[["y_adj_low","y_adj_high"]] = segments_data["y_adj"].apply(pd.Series)
     segments_rows = list(segments_data.itertuples(index=False))
     for seg_row in segments_rows:
+        input(seg_row)
         poly_x = (seg_row.x1,seg_row.x2,seg_row.x2,seg_row.x1)
         poly_y = (
             seg_row.y1+seg_row.y_adj_high,
@@ -199,3 +209,22 @@ def make_GS_Plot(
         svg.root.append(annotation)
     svg.tree.write(path_output)
 
+
+
+# Find the points earned from a result. This must be adjusted for each sport.
+def points_from_result_NFL(team: str,winner: str):
+    if winner == team:
+        return 1
+    elif winner == "TIE":
+        return 0
+    else:
+        return -1
+
+# From the number of games and points give the X and Y coordinates from a given state.
+def coords_from_state_NFL(games: int,points: int) -> tuple[int,float]:
+    return games,points
+
+games_xl,teams_xl = read_excel("data_NFL2025.xlsx","Input_Games","Input_Teams")
+team_dots_data,team_segments_data,team_labels_data = process_team("New Orleans Saints",games_xl,points_from_result_NFL)
+all_teams = list(teams_xl.index)
+dots_data,segments_data,labels_data,teams_data = produce_data_frames(all_teams,games_xl,teams_xl,points_from_result_NFL,coords_from_state_NFL)
