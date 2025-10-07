@@ -29,13 +29,58 @@ def find_label_offsets(
     y_offset = - row + 0.5*(rows-1)
     return x_offset,y_offset
 
+def dashed_segment(
+    pos1,
+    pos2,
+    y_adj,
+    dashes: Sequence[int]
+):
+    x1,y1 = pos1
+    x2,y2 = pos2
+    total_length = sum(dashes)
+    curr_length = 0
+    polygon_xs = []
+    polygon_ys = []
+    for i in range(len(dashes)):
+        new_length = dashes[i]
+        if i % 2 == 1:
+            curr_length += new_length
+            continue
+        coeff1 = curr_length/total_length
+        coeff2 = (curr_length+new_length)/total_length
+        new_x1 = x1 + coeff1 * (x2-x1)
+        new_x2 = x1 + coeff2 * (x2-x1)
+        new_y1 = y1 + coeff1 * (y2-y1)
+        new_y2 = y1 + coeff2 * (y2-y1)
+        new_poly_x = (
+            new_x1,
+            new_x2,
+            new_x2,
+            new_x1
+        )
+        new_poly_y = (
+            new_y1+y_adj[1],
+            new_y2+y_adj[1],
+            new_y2+y_adj[0],
+            new_y1+y_adj[0],
+        )
+        polygon_xs.append(new_poly_x)
+        polygon_ys.append(new_poly_y)
+        curr_length += new_length
+    return polygon_xs,polygon_ys 
 
 def make_GS_Plot(
     # DATA
-    dots_data,
-    segments_data,
-    labels_data,
-    teams_data,
+    teams,
+    games_xl,
+    teams_xl,
+    points_from_result,
+    coords_from_state,
+    # # DATA
+    # dots_data,
+    # segments_data,
+    # labels_data,
+    # teams_data,
 
     # PLOT SETTINGS
     plot_width = 224,
@@ -52,8 +97,9 @@ def make_GS_Plot(
 
     # DOTS AND SEGMENTS
     dot_size = 0.4, # radius (y) of dots
-    segment_scale = 0.8, # relative height of segments compared to dot_size 
+    # segment_scale = 0.8, # relative height of segments compared to dot_size 
     segment_rel_width = 4, # how many times thicker the segments should be than the spaces between the segments
+    dashed_segment_style = [2,1,2,1,2,1,2,1,2],
     
     # TEXT
     plot_title = "PLOT TITLE",
@@ -80,6 +126,8 @@ def make_GS_Plot(
     path_output = "test.svg"
     ):
     """Creates a Graphical Standings svg file at the path indicated, using the data and aesthetic settings provided."""
+
+    dots_data,segments_data,labels_data,teams_data = produce_data_frames(teams,games_xl,teams_xl,points_from_result,coords_from_state)
 
     # Find plot limits
     if x_lims == "auto":
@@ -179,15 +227,20 @@ def make_GS_Plot(
     segments_data[["y_adj_low","y_adj_high"]] = segments_data["y_adj"].apply(pd.Series)
     segments_rows = list(segments_data.itertuples(index=False))
     for seg_row in segments_rows:
-        input(seg_row)
-        poly_x = (seg_row.x1,seg_row.x2,seg_row.x2,seg_row.x1)
-        poly_y = (
-            seg_row.y1+seg_row.y_adj_high,
-            seg_row.y2+seg_row.y_adj_high,
-            seg_row.y2+seg_row.y_adj_low,
-            seg_row.y1+seg_row.y_adj_low,
-        )
-        plot.annotate_polygon(poly_x,poly_y,fill=teams_data.loc[seg_row.team].LineColour)
+        if seg_row.modifier1 == False:
+            poly_x = (seg_row.x1,seg_row.x2,seg_row.x2,seg_row.x1)
+            poly_y = (
+                seg_row.y1+seg_row.y_adj_high,
+                seg_row.y2+seg_row.y_adj_high,
+                seg_row.y2+seg_row.y_adj_low,
+                seg_row.y1+seg_row.y_adj_low,
+            )
+            plot.annotate_polygon(poly_x,poly_y,fill=teams_data.loc[seg_row.team].LineColour)
+        else:
+            poly_xs,poly_ys = dashed_segment(seg_row.pos1,seg_row.pos2,seg_row.y_adj,dashed_segment_style)
+            for poly_x,poly_y in zip(poly_xs,poly_ys):
+                plot.annotate_polygon(poly_x,poly_y,fill=teams_data.loc[seg_row.team].LineColour)
+
     # Dots
     dots_rows = list(dots_data.itertuples(index=False))
     for dot_row in dots_rows:
@@ -227,4 +280,5 @@ def coords_from_state_NFL(games: int,points: int) -> tuple[int,float]:
 games_xl,teams_xl = read_excel("data_NFL2025.xlsx","Input_Games","Input_Teams")
 team_dots_data,team_segments_data,team_labels_data = process_team("New Orleans Saints",games_xl,points_from_result_NFL)
 all_teams = list(teams_xl.index)
-dots_data,segments_data,labels_data,teams_data = produce_data_frames(all_teams,games_xl,teams_xl,points_from_result_NFL,coords_from_state_NFL)
+# dots_data,segments_data,labels_data,teams_data = produce_data_frames(all_teams,games_xl,teams_xl,points_from_result_NFL,coords_from_state_NFL)
+make_GS_Plot(all_teams,games_xl,teams_xl,points_from_result_NFL,coords_from_state_NFL)

@@ -2,7 +2,7 @@ import math
 from gstool import *
 import subprocess # for inkscape command line tool
 
-games_xl,teams_xl = read_excel("data_WSL202526.xlsx","Input_Games","Input_Teams")
+games_xl,teams_xl = read_excel("data_NSL202526.xlsx","Input_Games","Input_Teams")
 
 all_teams = teams_xl.index
 
@@ -12,7 +12,7 @@ num_games = games_xl[games_xl.Completed].shape[0]
 avg_points = (num_games*3-num_ties)/(num_games*2)
 
 # Find the points earned from a result. This must be adjusted for each sport, and should use integers.
-def points_from_result_WSL(team,winner):
+def points_from_result_NSL(team,winner):
     if winner == team:
         return 3
     elif winner == "TIE":
@@ -21,11 +21,11 @@ def points_from_result_WSL(team,winner):
         return 0
 
 # From the number of games and points give the X and Y coordinates from a given state.
-def coords_from_state_WSL(games,points):
+def coords_from_state_NSL(games,points):
     return games,(points-(avg_points*games))
 
 # Obtain DataFrames for all_teams
-dots_data,segments_data,labels_data,teams_data = produce_data_frames(all_teams,games_xl,teams_xl,points_from_result_WSL,coords_from_state_WSL)
+dots_data,segments_data,labels_data,teams_data = produce_data_frames(all_teams,games_xl,teams_xl,points_from_result_NSL,coords_from_state_NSL)
 
 print("Average points:",round(avg_points,2))
 # print(segments_data)
@@ -40,7 +40,7 @@ y_min = math.floor(min(dots_data.y))
 date = "Oct 07, 2025"
 week = 5
 
-wsl_annotations = [
+nsl_annotations = [
     svg_text(
         x = 254.5,
         y = 142,
@@ -67,7 +67,7 @@ wsl_annotations = [
     )
 ]
 
-def make_WSL_plot(
+def make_NSL_plot(
     teams,
     plot_title,
     path_output
@@ -77,22 +77,22 @@ def make_WSL_plot(
         teams = teams,
         games_xl = games_xl,
         teams_xl = teams_xl,
-        points_from_result = points_from_result_WSL,
-        coords_from_state = coords_from_state_WSL,
+        points_from_result = points_from_result_NSL,
+        coords_from_state = coords_from_state_NSL,
 
         # PLOT SETTINGS
-        plot_width = 212,#224,
-        x_lims = (0,x_max), # either tuple (x_min,x_max) or "auto"
+        plot_width = 224,#224,
+        x_lims = (0,25), # either tuple (x_min,x_max) or "auto"
         y_lims = (y_min,y_max), # either tuple (x_min,x_max) or "auto"
         expand_y = 0.2,#0.5, # amount of padding to add
         
         # BREAKS
-        x_break_size = 1,
-        y_break_size = 1,
+        x_break_size = 5,
+        y_break_size = 5,
         axis_labels_size = 5,
 
         # DOTS AND SEGMENTS
-        dot_size = 0.3, # radius (y) of dots
+        dot_size = 0.4, # radius (y) of dots
         segment_rel_width = 4, # how many times thicker the segments should be than the spaces between the segments
         
         # TEXT
@@ -102,9 +102,9 @@ def make_WSL_plot(
         horizontal_axis_title = "Match",
         
         # LABELS
-        label_size = 1.5, # label size in y
-        label_shared_x_offset = 0.15,
-        label_x_offset = 0.2,
+        label_size = 4, # label size in y
+        label_shared_x_offset = 0.8,
+        label_x_offset = 0.8,
         label_y_offset = 1,
         
         # AESTHETICS
@@ -118,20 +118,20 @@ font-weight: normal
 }
 """,
         # font_family = "Alegreya Sans",
-        annotations = wsl_annotations,
+        annotations = nsl_annotations,
 
         # COLOURS
-        background_colour = "#e6f2e7",
+        background_colour = "#f2f2e6",
 
         # AUXILIARY FILE PATHS
-        path_logos = "./../outputs/logos/wsl/",
+        path_logos = "./../outputs/logos/nsl/",
         path_output = path_output
     )
 
-make_WSL_plot(
+make_NSL_plot(
     teams = all_teams,
-    plot_title = "WSL Graphical Standings – Matchweek "+str(week),
-    path_output = "outputs/WSL202526_W"+str(week)+".svg"
+    plot_title = "NSL Graphical Standings – Matchweek "+str(week),
+    path_output = "outputs/NSL202526_W"+str(week)+".svg"
 )
 
-subprocess.run(["inkscape","./outputs/WSL202526_W"+str(week)+".svg","-o","./outputs/WSL202526_W"+str(week)+".png","-d",str(960*2)],shell=True)
+subprocess.run(["inkscape","./outputs/NSL202526_W"+str(week)+".svg","-o","./outputs/NSL202526_W"+str(week)+".png","-d",str(960*2)],shell=True)

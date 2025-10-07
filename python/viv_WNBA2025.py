@@ -10,7 +10,7 @@ west_teams = teams_xl[teams_xl.Conference == "Western"].index
 teams_lists = (east_teams,west_teams)
 confs = ("Eastern","Western")
 
-# Find the points earned from a result. This must be adjusted for each sport.
+# Find the points earned from a result. This must be adjusted for each sport, and should use integers.
 def points_from_result_WNBA(team,winner):
     return int(team == winner)
 
@@ -18,7 +18,7 @@ def points_from_result_WNBA(team,winner):
 def coords_from_state_WNBA(games,points):
     return games,2*points-games
 
-# Obtain DataFrames for all_teams
+# Obtain DataFrames for all_teams, in order to obtain max absolute y value.
 dots_data,segments_data,labels_data,teams_data = produce_data_frames(all_teams,games_xl,teams_xl,points_from_result_WNBA,coords_from_state_WNBA)
 
 # Obtain maximum absolute y value.
@@ -41,19 +41,17 @@ wnba_annotations = [
 ]
 
 def make_WNBA_plot(
-    dots_data,
-    segments_data,
-    labels_data,
-    teams_data,
+    teams,
     plot_title,
     path_output
     ):
     make_GS_Plot(
         # DATA
-        dots_data,
-        segments_data,
-        labels_data,
-        teams_data,
+        teams = teams,
+        games_xl = games_xl,
+        teams_xl = teams_xl,
+        points_from_result = points_from_result_WNBA,
+        coords_from_state = coords_from_state_WNBA,
 
         # PLOT SETTINGS
         plot_width = 224,
@@ -68,7 +66,6 @@ def make_WNBA_plot(
 
         # DOTS AND SEGMENTS
         dot_size = 0.5, # radius (y) of dots
-        segment_scale = 0.8, # relative height of segments compared to dot_size 
         segment_rel_width = 4, # how many times thicker the segments should be than the spaces between the segments
         
         # TEXT
@@ -105,10 +102,7 @@ font-weight: normal
     )
 
 make_WNBA_plot(
-    dots_data,
-    segments_data,
-    labels_data,
-    teams_data,
+    teams = all_teams,
     plot_title = "WNBA Graphical Standings – "+date,
     path_output = "outputs/WNBA2025_W"+str(week)+".svg"
 )
@@ -116,12 +110,8 @@ make_WNBA_plot(
 subprocess.run(["inkscape","./outputs/WNBA2025_W"+str(week)+".svg","-o","./outputs/WNBA2025_W"+str(week)+".png","-d",str(960*2)],shell=True)
 
 for team_list,conf in zip(teams_lists,confs):
-    dots_data,segments_data,labels_data,teams_data = produce_data_frames(team_list,games_xl,teams_xl,points_from_result_WNBA,coords_from_state_WNBA)
     make_WNBA_plot(
-        dots_data,
-        segments_data,
-        labels_data,
-        teams_data,
+        teams = team_list,
         plot_title = "WNBA Graphical Standings – "+date+" – " + conf,
         path_output = "outputs/WNBA2025_W"+str(week)+"_"+conf+".svg"
     )
