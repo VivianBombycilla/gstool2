@@ -138,21 +138,21 @@ make_NFL_plot(
 
 subprocess.run(["inkscape","./outputs/NFL2025_W"+str(week)+".svg","-o","./outputs/NFL2025_W"+str(week)+".png","-d",str(960*2)],shell=True)
 
-# for team_list,conf in zip(confs_teams,["AFC","NFC"]):
-#     make_NFL_plot(
-#         team_list,
-#         plot_title = "NFL Graphical Standings – Week "+str(week)+", 2025"+" – " + conf,
-#         path_output = "outputs/NFL2025_W"+str(week)+"_"+conf+".svg"
-#     )
-#     subprocess.run(["inkscape","outputs/NFL2025_W"+str(week)+"_"+conf+".svg","-o","outputs/NFL2025_W"+str(week)+"_"+conf+".png","-d",str(960*2)],shell=True)
+for team_list,conf in zip(confs_teams,["AFC","NFC"]):
+    make_NFL_plot(
+        team_list,
+        plot_title = "NFL Graphical Standings – Week "+str(week)+", 2025"+" – " + conf,
+        path_output = "outputs/NFL2025_W"+str(week)+"_"+conf+".svg"
+    )
+    subprocess.run(["inkscape","outputs/NFL2025_W"+str(week)+"_"+conf+".svg","-o","outputs/NFL2025_W"+str(week)+"_"+conf+".png","-d",str(960*2)],shell=True)
     
 
-# for team_list,div,div_long in zip(divs_teams,divs,divs_long):
-#     make_NFL_plot(
-#         team_list,
-#         plot_title = "NFL Graphical Standings – Week "+str(week)+", 2025"+" – " + div_long,
-#         path_output = "outputs/NFL2025_W"+str(week)+"_"+div+".svg"
-#     )
-#     subprocess.run(["inkscape","outputs/NFL2025_W"+str(week)+"_"+div+".svg","-o","outputs/NFL2025_W"+str(week)+"_"+div+".png","-d",str(960*2)],shell=True)
+for team_list,div,div_long in zip(divs_teams,divs,divs_long):
+    make_NFL_plot(
+        team_list,
+        plot_title = "NFL Graphical Standings – Week "+str(week)+", 2025"+" – " + div_long,
+        path_output = "outputs/NFL2025_W"+str(week)+"_"+div+".svg"
+    )
+    subprocess.run(["inkscape","outputs/NFL2025_W"+str(week)+"_"+div+".svg","-o","outputs/NFL2025_W"+str(week)+"_"+div+".png","-d",str(960*2)],shell=True)
     
 

@@ -38,7 +38,7 @@ y_min = math.floor(min(dots_data.y))
 
 # WEEK TO WEEK
 date = "Oct 07, 2025"
-week = 5
+week = 25
 
 nsl_annotations = [
     svg_text(
