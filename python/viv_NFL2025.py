@@ -46,8 +46,8 @@ x_max = max(dots_data.x)
 y_max = max(abs(dots_data.y))
 
 # WEEK TO WEEK
-date = "Oct 07, 2025"
-week = 5
+date = "Oct 21, 2025"
+week = 7
 
 nfl_annotations = [
     svg_text(
@@ -82,7 +82,7 @@ def make_NFL_plot(
         coords_from_state = coords_from_state_NFL,
 
         # PLOT SETTINGS
-        plot_width = 204,
+        plot_width = 208,
         x_lims = (0,x_max), # either tuple (x_min,x_max) or "auto"
         y_lims = (-y_max,y_max), # either tuple (x_min,x_max) or "auto"
         expand_y = 0.4,#0.5, # amount of padding to add

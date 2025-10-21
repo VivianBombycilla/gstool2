@@ -37,8 +37,8 @@ y_max = math.ceil(max(dots_data.y))
 y_min = math.floor(min(dots_data.y))
 
 # WEEK TO WEEK
-date = "Oct 07, 2025"
-week = 5
+date = "Oct 14, 2025"
+week = 6
 
 wsl_annotations = [
     svg_text(
@@ -81,7 +81,7 @@ def make_WSL_plot(
         coords_from_state = coords_from_state_WSL,
 
         # PLOT SETTINGS
-        plot_width = 212,#224,
+        plot_width = 224,#224,
         x_lims = (0,x_max), # either tuple (x_min,x_max) or "auto"
         y_lims = (y_min,y_max), # either tuple (x_min,x_max) or "auto"
         expand_y = 0.2,#0.5, # amount of padding to add

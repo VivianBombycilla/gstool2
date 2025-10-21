@@ -99,7 +99,7 @@ def make_GS_Plot(
     dot_size = 0.4, # radius (y) of dots
     # segment_scale = 0.8, # relative height of segments compared to dot_size 
     segment_rel_width = 4, # how many times thicker the segments should be than the spaces between the segments
-    dashed_segment_style = [2,1,2,1,2,1,2,1,2],
+    dashed_segment_style = [2,1,2,1,2],
     
     # TEXT
     plot_title = "PLOT TITLE",

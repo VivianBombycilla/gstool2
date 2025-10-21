@@ -37,8 +37,8 @@ y_max = math.ceil(max(dots_data.y))
 y_min = math.floor(min(dots_data.y))
 
 # WEEK TO WEEK
-date = "Oct 07, 2025"
-week = 25
+date = "Oct 21, 2025"
+week = 27
 
 nsl_annotations = [
     svg_text(
@@ -81,7 +81,7 @@ def make_NSL_plot(
         coords_from_state = coords_from_state_NSL,
 
         # PLOT SETTINGS
-        plot_width = 224,#224,
+        plot_width = 218,#224,
         x_lims = (0,25), # either tuple (x_min,x_max) or "auto"
         y_lims = (y_min,y_max), # either tuple (x_min,x_max) or "auto"
         expand_y = 0.2,#0.5, # amount of padding to add
@@ -102,8 +102,8 @@ def make_NSL_plot(
         horizontal_axis_title = "Match",
         
         # LABELS
-        label_size = 4, # label size in y
-        label_shared_x_offset = 0.8,
+        label_size = 3, # label size in y
+        label_shared_x_offset = 0.6,
         label_x_offset = 0.8,
         label_y_offset = 1,
         
@@ -130,7 +130,7 @@ font-weight: normal
 
 make_NSL_plot(
     teams = all_teams,
-    plot_title = "NSL Graphical Standings – Matchweek "+str(week),
+    plot_title = "NSL Graphical Standings – 2025",
     path_output = "outputs/NSL202526_W"+str(week)+".svg"
 )
 
